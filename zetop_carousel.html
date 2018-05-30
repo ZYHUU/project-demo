@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!--移动端设置viewport-->
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <!--引入公共样式-->
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <!--引入首页的js文件-->
+    <!--<script src="./js/index.js"></script>-->
+    <!--<script src="./zepto-master/src/zepto.min.js"></script>
+    &lt;!&ndash;为了支持和jq类似的选择器，得引入一个新的js文件&ndash;&gt;
+    <script src="./zepto-master/src/selector.js"></script>
+    <script src="./zepto-master/src/fx.js"></script>
+    <script src="./zepto-master/src/touch.js"></script>-->
+    <!--引入定制之后的js文件-->
+    <script src="./js/zepto.min.js"></script>
+    <title>京东-首页</title>
+</head>
+
+<body>
+    <div class="jd_layout">
+        <!--搜索块-->
+        <div class="jd_search">
+            <a href="javascript:;" class="jd_logo"></a>
+            <form action="" class="jd_searchBox">
+                <!--<span></span>-->
+                <input type="text" placeholder="请输入商品名称">
+            </form>
+            <a href="javascript:;" class="jd_login">登录</a>
+        </div>
+        <!--轮播图-->
+        <div class="jd_banner">
+            <!--图片-->
+            <ul class="jd_bannerImg clearfix">
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l1.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l2.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l3.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l4.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l5.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l6.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l7.jpg" alt="">
+                </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                    <img src="./uploads/l8.jpg" alt="">
+                </a>
+                </li>
+            </ul>
+            <!--点标记-->
+            <ul class="jd_bannerIndicator">
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+    $(function() {
+        var banner = $(".jd_banner");
+        var ulImg = banner.find("ul:first-of-type"); //ul轮播图盒子
+        var first = ulImg.find("li:eq(0)");
+        var last = ulImg.find("li:last-of-type");
+        var imgWidth = banner.width(); //li的宽度
+
+        ulImg.append(first.clone()); //将第一个元素添加到最后
+        last.clone().insertBefore(first); //将最后一个元素添加到最前
+
+        var count = ulImg.find("li").length; //轮播图的个数
+        var lis = ulImg.find("li"); //轮播图每个li
+
+        ulImg.width(count * imgWidth); //设置ul的宽度
+        lis.width(imgWidth); //设置每个轮播图li的宽度
+        ulImg.css("left", -imgWidth);
+        var index = 1; //记录当前显示图片的索引
+        var timerInterval = null;
+        var timerId = null;
+        //自动轮播 -- 每个一段时间，改变ul的位置
+
+        function changeImg() {
+            ulImg.animate({ "left": -index * imgWidth }, 200, function() {
+                //动画执行完毕后执行
+                // alert("over");
+                if (index === count - 1) {
+                    index = 1;
+                    ulImg.css("left", -index * imgWidth);
+                } else if (index === 0) {
+                    index = count - 2;
+                    ulImg.css("left", -index * imgWidth);
+                }
+            });
+        }
+
+        function autoPlay() {
+            timerInterval = setInterval(function() {
+                index++;
+                changeImg();
+            }, 2000)
+        }
+        //向左滑动
+        ulImg.on("swipeLeft", function() {
+            clearInterval(timerInterval);
+            index++;
+            changeImg();
+            //等滑动效果执行完毕后，再次开启自动轮播图
+            clearTimeout(timerId);
+            timerId = setTimeout(function() {
+                autoPlay();
+            }, 500);
+        });
+        //向右滑动
+        ulImg.on("swipeRight", function() {
+            clearInterval(timerInterval);
+            index--;
+            changeImg();
+            clearTimeout(timerId);
+            timerId = setTimeout(function() {
+                autoPlay();
+            }, 500);
+        });
+
+        autoPlay();
+
+    });
+    </script>
+</body>
+
+</html>
